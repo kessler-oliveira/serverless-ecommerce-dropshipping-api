@@ -6,10 +6,9 @@ plugins:
 
 custom:
   stage: ${self:provider.stage}
-  webpack:
-    webpackConfig: ./webpack.config.js
-    includeModules: true
-  environment: ${file(../../env.yml):${self:custom.stage}, file(../../env.yml):default}
+  # webpack:
+  #   webpackConfig: ./webpack.config.js
+  #   includeModules: true
 
 provider:
   name: aws
@@ -18,8 +17,8 @@ provider:
   region: ${opt:region, 'us-east-1'}
   stackName: ${self:custom.stage}-${self:service.name}
   environment:
-    JWT_SECRET: ${self:custom.environment.JWT_SECRET}
-    DB: ${self:custom.environment.DB}
+    JWT_SECRET: ${env:JWT_SECRET}
+    DB: ${env:DB}
 
 apiGateway:
   restApiId:
