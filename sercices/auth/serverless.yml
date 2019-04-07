@@ -1,0 +1,54 @@
+service: sed-api-auth
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+custom:
+  stage: ${self:provider.stage}
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  environment: ${file(../../env.yml):${self:custom.stage}, file(../../env.yml):default}
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  stackName: ${self:custom.stage}-${self:service.name}
+  environment:
+    JWT_SECRET: ${self:custom.environment.JWT_SECRET}
+    DB: ${self:custom.environment.DB}
+
+apiGateway:
+  restApiId:
+    'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiId
+  restApiRootResourceId:
+    'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
+
+functions:
+  verify-token:
+    handler: VerifyToken.auth
+  login:
+    handler: AuthHandler.login
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+  register:
+    handler: AuthHandler.register
+    events:
+      - http:
+          path: register
+          method: post
+          cors: true
+  me:
+    handler: AuthHandler.me
+    events:
+      - http:
+          path: me
+          method: get
+          cors: true
+          authorizer: verify-token
