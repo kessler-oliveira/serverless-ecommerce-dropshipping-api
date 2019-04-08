@@ -28,8 +28,10 @@ module.exports.handler = (event, context, callback) => {
 
   // verifies secret and checks exp
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err)
+    if (err) {
+      console.log(err)
       return callback(null, 'Unauthorized');
+    }
 
     // if everything is good, save to request for use in other routes
     return callback(null, generatePolicy(decoded.id, 'Allow', event.methodArn))

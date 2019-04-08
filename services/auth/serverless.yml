@@ -63,7 +63,7 @@ resources:
       Type: AWS::ApiGateway::Authorizer
       Properties:
         Name: Authorizer
-        Type: REQUEST
+        Type: TOKEN
         IdentitySource: method.request.header.Authorization
         AuthorizerUri: 
           Fn::Join: [ "",
