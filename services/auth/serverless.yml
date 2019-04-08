@@ -29,27 +29,27 @@ provider:
       'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
 
 functions:
-  authorize:
+  Authorize:
     handler: Authorize.handler
-  register:
+  Register:
     handler: Register.handler
     events:
       - http:
           path: register
           method: post
           cors: true
-  login:
+  Login:
     handler: Login.handler
     events:
       - http:
           path: login
           method: post
           cors: true
-  me:
+  Me:
     handler: Me.handler
     events:
       - http:
           path: me
           method: get
           cors: true
-          authorizer: authorize
+          authorizer: Authorize

@@ -26,10 +26,12 @@ provider:
       'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
 
 functions:
-  getUsers:
+  GetUsers:
     handler: Users.get
     events:
       - http:
           path: users
           method: get
           cors: true
+          authorizer:
+            arn: ${cf:${self:custom.stage}-sed-api-auth.AuthorizeLambdaFunctionQualifiedArn}

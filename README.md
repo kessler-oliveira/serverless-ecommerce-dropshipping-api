@@ -17,7 +17,11 @@ Clone this repo.
 $ git clone https://github.com/kessler-oliveira/serverless-ecommerce-dropshipping-api.git
 ```
 
-Finally, go to director and deploy the **services**:
+Finally, go to director and deploy the **services** in order:
+
+| Phase 1 | Phase 2       |
+| :---    | :---          |
+| auth    | user          |
 
 ``` bash
 $ serverless deploy
