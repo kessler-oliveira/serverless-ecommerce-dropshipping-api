@@ -28,7 +28,6 @@
     "babel-runtime": "^6.26.0",
     "bcryptjs": "^2.4.3",
     "bcryptjs-then": "^1.0.1",
-    "dotenv": "^7.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.4.22",
     "source-map-support": "^0.4.18",

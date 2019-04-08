@@ -64,3 +64,6 @@ env.yml
 # Serverless
 .webpack
 .serverless
+
+#json
+package-lock.json
