@@ -8,7 +8,7 @@ module.exports = connectToDatabase = () => {
   }
 
   console.log('=> using new database connection');
-  return mongoose.connect(process.env.DB, { useNewUrlParser: true }) // keep the connection string in an env var
+  return mongoose.connect(process.env.DB, { useNewUrlParser: true })
     .then(db => { 
       isConnected = db.connections[0].readyState;
     });

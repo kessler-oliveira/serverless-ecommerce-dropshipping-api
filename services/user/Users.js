@@ -1,7 +1,7 @@
-const connectToDatabase = require('../../libs/mongodb');
+const connectToDatabase = require('../../libs/db');
 const User = require('./User');
 
-module.exports.getUsers = (event, context) => {
+module.exports.get = (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
   return connectToDatabase()
     .then(getUsers)

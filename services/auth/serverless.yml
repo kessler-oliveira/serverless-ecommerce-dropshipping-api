@@ -4,6 +4,9 @@ plugins:
   - serverless-webpack
   - serverless-offline
 
+package:
+  individually: true
+
 custom:
   stage: ${self:provider.stage}
   webpack:
@@ -26,27 +29,27 @@ provider:
       'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
 
 functions:
-  verify-token:
-    handler: VerifyToken.auth
-  login:
-    handler: AuthHandler.login
-    events:
-      - http:
-          path: login
-          method: post
-          cors: true
+  authorize:
+    handler: Authorize.handler
   register:
-    handler: AuthHandler.register
+    handler: Register.handler
     events:
       - http:
           path: register
           method: post
           cors: true
+  login:
+    handler: Login.handler
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
   me:
-    handler: AuthHandler.me
+    handler: Me.handler
     events:
       - http:
           path: me
           method: get
           cors: true
-          authorizer: verify-token
+          authorizer: authorize

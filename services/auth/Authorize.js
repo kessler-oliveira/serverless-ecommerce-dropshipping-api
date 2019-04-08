@@ -18,7 +18,7 @@ const generatePolicy = (principalId, effect, resource) => {
   return authResponse;
 }
 
-module.exports.auth = (event, context, callback) => {
+module.exports.handler = (event, context, callback) => {
 
   // check header or url parameters or post parameters for token
   const token = event.authorizationToken;

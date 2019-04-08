@@ -5,7 +5,7 @@ plugins:
   - serverless-offline
 
 custom:
-  stage: ${opt:stage, self:provider.stage}
+  stage: ${self:provider.stage}
   webpack:
     webpackConfig: webpack.config.js
     includeModules: true
@@ -27,7 +27,7 @@ provider:
 
 functions:
   getUsers:
-    handler: UserHandler.getUsers
+    handler: Users.get
     events:
       - http:
           path: users
