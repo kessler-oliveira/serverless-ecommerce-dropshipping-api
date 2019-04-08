@@ -29,27 +29,70 @@ provider:
       'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
 
 functions:
-  Authorize:
-    handler: Authorize.handler
-  Register:
+  authorizer:
+    handler: Authorizer.handler
+  register:
     handler: Register.handler
     events:
       - http:
           path: register
           method: post
           cors: true
-  Login:
+  login:
     handler: Login.handler
     events:
       - http:
           path: login
           method: post
           cors: true
-  Me:
+  me:
     handler: Me.handler
     events:
       - http:
           path: me
           method: get
           cors: true
-          authorizer: Authorize
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+               Ref: Authorizer
+
+resources:
+  Resources:
+    Authorizer:
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: Authorizer
+        Type: REQUEST
+        IdentitySource: method.request.header.Authorization
+        AuthorizerUri: 
+          Fn::Join: [ "",
+            [
+              "arn:aws:apigateway:",
+              "${self:provider.region}",
+              ":lambda:path/",
+              "2015-03-31/functions/",
+              Fn::GetAtt: ["AuthorizerLambdaFunction", "Arn" ],
+              "/invocations"
+            ]]
+        RestApiId:
+          Fn::ImportValue: ${self:custom.stage}-sed-api-gateway-restApiId
+    ApiGatewayLambdaPermissions:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName:
+          Fn::GetAtt: [ AuthorizerLambdaFunction, Arn]
+        Action: lambda:InvokeFunction
+        Principal:
+          Fn::Join: [ "",
+          [
+            "apigateway.",
+            Ref: AWS::URLSuffix
+          ]]
+
+  Outputs:
+    Authorizer:
+      Value:
+        Ref: Authorizer
+      Export:
+        Name: ${self:custom.stage}-sed-authorizer
