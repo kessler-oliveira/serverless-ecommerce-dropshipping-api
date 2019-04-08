@@ -19,12 +19,11 @@ provider:
   environment:
     JWT_SECRET: ${env:JWT_SECRET}
     DB: ${env:DB}
-
-apiGateway:
-  restApiId:
-    'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiId
-  restApiRootResourceId:
-    'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
+  apiGateway:
+    restApiId:
+      'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiId
+    restApiRootResourceId:
+      'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
 
 functions:
   getUsers:
