@@ -6,9 +6,9 @@ plugins:
 
 custom:
   stage: ${self:provider.stage}
-  # webpack:
-  #   webpackConfig: ./webpack.config.js
-  #   includeModules: true
+  webpack:
+    webpackConfig: webpack.config.js
+    includeModules: true
 
 provider:
   name: aws
