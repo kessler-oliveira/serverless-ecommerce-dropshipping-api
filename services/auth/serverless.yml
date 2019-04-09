@@ -64,6 +64,7 @@ resources:
       Properties:
         Name: Authorizer
         Type: TOKEN
+        AuthorizerResultTtlInSeconds: 0
         IdentitySource: method.request.header.Authorization
         AuthorizerUri: 
           Fn::Join: [ "",
