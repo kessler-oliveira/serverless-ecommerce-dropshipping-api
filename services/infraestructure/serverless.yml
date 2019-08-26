@@ -1,0 +1,52 @@
+service:
+  name: sed-infrastructure-api
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  stackName: ${self:custom.stage}-${self:service.name}
+
+custom:
+  stage: ${self:provider.stage}
+
+resources:
+  Resources:
+    ApiGateway:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: ${self:custom.stage}-sed-api-gateway
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: ApiGateway
+    GatewayResponseDefault5XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: ApiGateway
+
+  Outputs:
+    RestApiId:
+      Value:
+        Ref: ApiGateway
+      Export:
+        Name: ${self:custom.stage}-sed-api-gateway-restApiId
+
+    RestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - ApiGateway
+          - RootResourceId
+      Export:
+        Name: ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
