@@ -19,9 +19,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
   stackName: ${self:custom.stage}-${self:service.name}
-  environment:
-    JWT_SECRET: ${env:JWT_SECRET}
-    DB: ${env:DB}
+  environment: ${file(../../env.yml):${self:custom.stage}}
   apiGateway:
     restApiId:
       'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiId

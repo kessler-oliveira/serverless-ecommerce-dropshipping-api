@@ -1,0 +1,43 @@
+service: sed-api-register
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+package:
+  individually: true
+
+custom:
+  stage: ${self:provider.stage}
+  webpack:
+    webpackConfig: webpack.config.js
+    includeModules: true
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  stackName: ${self:custom.stage}-${self:service.name}
+  environment: ${file(../../env.yml):${self:custom.stage}}
+  apiGateway:
+    restApiId:
+      'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiId
+    restApiRootResourceId:
+      'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
+
+functions:
+  create:
+    handler: Create.handler
+    events:
+      - http:
+          path: user
+          method: post
+          cors: true
+  delete:
+    handler: Remove.handler
+    events:
+      - http:
+          path: user/{id}
+          method: delete
+          cors: true
