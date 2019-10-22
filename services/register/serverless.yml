@@ -58,6 +58,41 @@ functions:
           path: users/{id}
           method: delete
           cors: true
+  createProduct:
+    handler: Product.create
+    events:
+      - http:
+          path: products
+          method: post
+          cors: true
+  getOneProduct:
+    handler: Product.getOne
+    events:
+      - http:
+          path: products/{id}
+          method: get
+          cors: true
+  getAllProduct:
+    handler: Product.getAll
+    events:
+      - http:
+          path: products
+          method: get
+          cors: true
+  updateProduct:
+    handler: Product.update
+    events:
+      - http:
+          path: products/{id}
+          method: put
+          cors: true
+  destroyProduct:
+    handler: Product.destroy
+    events:
+      - http:
+          path: products/{id}
+          method: delete
+          cors: true
 
 plugins:
   - serverless-offline
