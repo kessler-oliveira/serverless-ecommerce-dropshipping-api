@@ -6,17 +6,14 @@ provider:
   runtime: nodejs8.10
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
-  stackName: ${self:custom.stage}-${self:service.name}
-
-custom:
-  stage: ${self:provider.stage}
+  stackName: ${self:provider.stage}-${self:service.name}
 
 resources:
   Resources:
     ApiGateway:
       Type: AWS::ApiGateway::RestApi
       Properties:
-        Name: ${self:custom.stage}-sed-api-gateway
+        Name: ${self:provider.stage}-sed-api-gateway
     GatewayResponseDefault4XX:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
@@ -41,7 +38,7 @@ resources:
       Value:
         Ref: ApiGateway
       Export:
-        Name: ${self:custom.stage}-sed-api-gateway-restApiId
+        Name: ${self:provider.stage}-sed-api-gateway-restApiId
 
     RestApiRootResourceId:
       Value:
@@ -49,4 +46,4 @@ resources:
           - ApiGateway
           - RootResourceId
       Export:
-        Name: ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
+        Name: ${self:provider.stage}-sed-api-gateway-restApiRootResourceId

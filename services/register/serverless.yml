@@ -1,43 +1,63 @@
 service: sed-api-register
 
-plugins:
-  - serverless-webpack
-  - serverless-offline
-
-package:
-  individually: true
-
 custom:
-  stage: ${self:provider.stage}
-  webpack:
-    webpackConfig: webpack.config.js
-    includeModules: true
+  secrets: ${file(env.yml):${self:provider.stage}}
 
 provider:
   name: aws
   runtime: nodejs8.10
+  timeout: 30
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
-  stackName: ${self:custom.stage}-${self:service.name}
-  environment: ${file(../../env.yml):${self:custom.stage}}
+  stackName: ${self:provider.stage}-${self:service.name}
+  environment:
+    DB_NAME: ${self:custom.secrets.DB_NAME}
+    DB_USER: ${self:custom.secrets.DB_USER}
+    DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
+    DB_HOST: ${self:custom.secrets.DB_HOST}
+    DB_PORT: ${self:custom.secrets.DB_PORT}
   apiGateway:
     restApiId:
-      'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiId
+      "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiId
     restApiRootResourceId:
-      'Fn::ImportValue': ${self:custom.stage}-sed-api-gateway-restApiRootResourceId
+      "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiRootResourceId
 
 functions:
-  create:
-    handler: Create.handler
+  createUser:
+    handler: User.create
     events:
       - http:
-          path: user
+          path: users
           method: post
           cors: true
-  delete:
-    handler: Remove.handler
+  getOneUser:
+    handler: User.getOne
     events:
       - http:
-          path: user/{id}
+          path: users/{id}
+          method: get
+          cors: true
+  getAllUser:
+    handler: User.getAll
+    events:
+      - http:
+          path: users
+          method: get
+          cors: true
+  updateUser:
+    handler: User.update
+    events:
+      - http:
+          path: users/{id}
+          method: put
+          cors: true
+  destroyUser:
+    handler: User.destroy
+    events:
+      - http:
+          path: users/{id}
           method: delete
           cors: true
+
+plugins:
+  - serverless-offline
