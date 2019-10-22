@@ -10,7 +10,7 @@ module.exports.successResponse = successResponse = (body) => ({
 	body: JSON.stringify(body)
 });
 
-module.exports.httpError = httpError = (statusCode, message) => {
+module.exports.HTTPError = HTTPError = (statusCode, message) => {
 	const error = new Error(message)
 	error.statusCode = statusCode
 	return error

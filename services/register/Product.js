@@ -1,28 +1,13 @@
 'use strict'
 
 const connectToDatabase = require('./db')
-const bcrypt = require('bcryptjs-then')
+const errorResponse = require('./util').errorResponse
+const successResponse = require('./util').successResponse
 
 function HTTPError(statusCode, message) {
 	const error = new Error(message)
 	error.statusCode = statusCode
 	return error
-}
-
-function responseSuccess(message) {
-	return {
-		statusCode: 200,
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(message)
-	}
-}
-
-function responseError(statusCode, message) {
-	return {
-		statusCode: statusCode || 500,
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ 'message': message })
-	}
 }
 
 module.exports.create = async (event) => {
@@ -32,10 +17,10 @@ module.exports.create = async (event) => {
 
 		const product = await Product.create(input)
 
-		return responseSuccess(product)
+		return successResponse(product)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not create the product.')
+		return errorResponse(err.statusCode, err.message || 'Could not create the product.')
 	}
 }
 
@@ -46,10 +31,10 @@ module.exports.getOne = async (event) => {
 
 		if (!product) throw new HTTPError(404, `Product with id: ${event.pathParameters.id} was not found`)
 
-		return responseSuccess(product)
+		return successResponse(product)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not fetch the product.')
+		return errorResponse(err.statusCode, err.message || 'Could not fetch the product.')
 	}
 }
 
@@ -58,10 +43,10 @@ module.exports.getAll = async () => {
 		const { Product } = await connectToDatabase()
 		const products = await Product.findAll()
 
-		return responseSuccess(products)
+		return successResponse(products)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not fetch the products.')
+		return errorResponse(err.statusCode, err.message || 'Could not fetch the products.')
 	}
 }
 
@@ -81,10 +66,10 @@ module.exports.update = async (event) => {
 
 		await product.save()
 
-		return responseSuccess(product)
+		return successResponse(product)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not update the product.')
+		return errorResponse(err.statusCode, err.message || 'Could not update the product.')
 	}
 }
 
@@ -97,9 +82,9 @@ module.exports.destroy = async (event) => {
 
 		await product.destroy()
 
-		return responseSuccess(product)
+		return successResponse(product)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not destroy the product.')
+		return errorResponse(err.statusCode, err.message || 'Could not destroy the product.')
 	}
 }

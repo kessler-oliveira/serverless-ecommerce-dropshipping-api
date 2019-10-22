@@ -1,31 +1,14 @@
 'use strict'
 
 const connectToDatabase = require('./db')
-const errorResponse = require('../../libs/util').errorResponse
-const successResponse = require('../../libs/util').successResponse
-const httpError = require('../../libs/util').httpError
+const errorResponse = require('./util').errorResponse
+const successResponse = require('./util').successResponse
 const bcrypt = require('bcryptjs-then')
 
 function HTTPError(statusCode, message) {
 	const error = new Error(message)
 	error.statusCode = statusCode
 	return error
-}
-
-function responseSuccess(message) {
-	return {
-		statusCode: 200,
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(message)
-	}
-}
-
-function responseError(statusCode, message) {
-	return {
-		statusCode: statusCode || 500,
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ 'message': message })
-	}
 }
 
 module.exports.create = async (event) => {
@@ -40,10 +23,10 @@ module.exports.create = async (event) => {
 
 		const user = await User.create(input)
 
-		return responseSuccess(user)
+		return successResponse(user)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not create the user.')
+		return errorResponse(err.statusCode, err.message || 'Could not create the user.')
 	}
 }
 
@@ -54,10 +37,10 @@ module.exports.getOne = async (event) => {
 
 		if (!user) throw new HTTPError(404, `User with id: ${event.pathParameters.id} was not found`)
 
-		return responseSuccess(user)
+		return successResponse(user)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not fetch the user.')
+		return errorResponse(err.statusCode, err.message || 'Could not fetch the user.')
 	}
 }
 
@@ -66,10 +49,10 @@ module.exports.getAll = async () => {
 		const { User } = await connectToDatabase()
 		const users = await User.findAll()
 
-		return responseSuccess(users)
+		return successResponse(users)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not fetch the users.')
+		return errorResponse(err.statusCode, err.message || 'Could not fetch the users.')
 	}
 }
 
@@ -86,10 +69,10 @@ module.exports.update = async (event) => {
 
 		await user.save()
 
-		return responseSuccess(user)
+		return successResponse(user)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not update the user.')
+		return errorResponse(err.statusCode, err.message || 'Could not update the user.')
 	}
 }
 
@@ -102,9 +85,9 @@ module.exports.destroy = async (event) => {
 
 		await user.destroy()
 
-		return responseSuccess(user)
+		return successResponse(user)
 	} catch (err) {
 		console.log(err)
-		return responseError(err.statusCode, err.message || 'Could not destroy the user.')
+		return errorResponse(err.statusCode, err.message || 'Could not destroy the user.')
 	}
 }
