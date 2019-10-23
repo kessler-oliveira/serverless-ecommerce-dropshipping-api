@@ -1,8 +1,5 @@
 service: sed-api-register
 
-custom:
-  secrets: ${file(env.yml):${self:provider.stage}}
-
 provider:
   name: aws
   runtime: nodejs8.10
@@ -10,12 +7,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
   stackName: ${self:provider.stage}-${self:service.name}
-  environment:
-    DB_NAME: ${self:custom.secrets.DB_NAME}
-    DB_USER: ${self:custom.secrets.DB_USER}
-    DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
-    DB_HOST: ${self:custom.secrets.DB_HOST}
-    DB_PORT: ${self:custom.secrets.DB_PORT}
+  environment: ${file(env.yml):${self:provider.stage}}
   apiGateway:
     restApiId:
       "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiId
@@ -24,70 +16,77 @@ provider:
 
 functions:
   createUser:
-    handler: User.create
+    handler: functions/user.create
     events:
       - http:
           path: users
           method: post
           cors: true
+  createUser2:
+    handler: functions/user.create
+    events:
+      - http:
+          path: users2
+          method: post
+          cors: true
   getOneUser:
-    handler: User.getOne
+    handler: functions/user.getOne
     events:
       - http:
           path: users/{id}
           method: get
           cors: true
   getAllUser:
-    handler: User.getAll
+    handler: functions/user.getAll
     events:
       - http:
           path: users
           method: get
           cors: true
   updateUser:
-    handler: User.update
+    handler: functions/user.update
     events:
       - http:
           path: users/{id}
           method: put
           cors: true
   destroyUser:
-    handler: User.destroy
+    handler: functions/user.destroy
     events:
       - http:
           path: users/{id}
           method: delete
           cors: true
   createProduct:
-    handler: Product.create
+    handler: functions/product.create
     events:
       - http:
           path: products
           method: post
           cors: true
   getOneProduct:
-    handler: Product.getOne
+    handler: functions/product.getOne
     events:
       - http:
           path: products/{id}
           method: get
           cors: true
   getAllProduct:
-    handler: Product.getAll
+    handler: functions/product.getAll
     events:
       - http:
           path: products
           method: get
           cors: true
   updateProduct:
-    handler: Product.update
+    handler: functions/product.update
     events:
       - http:
           path: products/{id}
           method: put
           cors: true
   destroyProduct:
-    handler: Product.destroy
+    handler: functions/product.destroy
     events:
       - http:
           path: products/{id}

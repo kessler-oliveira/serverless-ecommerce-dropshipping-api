@@ -1,9 +1,10 @@
 'use strict'
 
-const connectToDatabase = require('./db')
-const errorResponse = require('./util').errorResponse
-const successResponse = require('./util').successResponse
 const bcrypt = require('bcryptjs-then')
+
+const connectToDatabase = require('../libs/db')
+const errorResponse = require('../libs/utils').errorResponse
+const successResponse = require('../libs/utils').successResponse
 
 function HTTPError(statusCode, message) {
 	const error = new Error(message)

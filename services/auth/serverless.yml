@@ -1,0 +1,27 @@
+service: sed-api-auth
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  timeout: 30
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  stackName: ${self:provider.stage}-${self:service.name}
+  environment: ${file(env.yml):${self:provider.stage}}
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiRootResourceId
+
+functions:
+  login:
+    handler: functions/authentication.login
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+
+plugins:
+  - serverless-offline

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
-const UserModel = require('./models/User')
-const ProductModel = require('./models/Product')
+const UserModel = require('../models/User')
+const ProductModel = require('../models/Product')
 const sequelize = new Sequelize(
 	process.env.DB_NAME,
 	process.env.DB_USER,
