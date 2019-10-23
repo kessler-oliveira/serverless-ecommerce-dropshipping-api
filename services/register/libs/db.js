@@ -13,6 +13,10 @@ const sequelize = new Sequelize(
 )
 const User = UserModel(sequelize, Sequelize)
 const Product = ProductModel(sequelize, Sequelize)
+
+User.hasMany(Product, {foreignKey: 'userId', as: 'products'})
+Product.belongsTo(User, {foreignKey: 'userId'})
+
 const Models = { User, Product }
 const connection = {}
 
