@@ -19,7 +19,7 @@ module.exports.create = async (event) => {
 
 		return successResponse(product)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not create the product.')
 	}
 }
@@ -33,7 +33,7 @@ module.exports.getOne = async (event) => {
 
 		return successResponse(product)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not fetch the product.')
 	}
 }
@@ -45,7 +45,7 @@ module.exports.getAll = async () => {
 
 		return successResponse(products)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not fetch the products.')
 	}
 }
@@ -68,7 +68,7 @@ module.exports.update = async (event) => {
 
 		return successResponse(product)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not update the product.')
 	}
 }
@@ -84,7 +84,7 @@ module.exports.destroy = async (event) => {
 
 		return successResponse(product)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not destroy the product.')
 	}
 }

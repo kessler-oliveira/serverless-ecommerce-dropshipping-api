@@ -1,3 +1,5 @@
+'use strict'
+
 const errorResponse = (statusCode, message) => ({
 	statusCode: statusCode || 500,
 	headers: { 'Content-Type': 'application/json' },

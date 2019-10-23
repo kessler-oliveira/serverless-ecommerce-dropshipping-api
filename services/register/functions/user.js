@@ -26,7 +26,7 @@ module.exports.create = async (event) => {
 
 		return successResponse(user)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not create the user.')
 	}
 }
@@ -40,7 +40,7 @@ module.exports.getOne = async (event) => {
 
 		return successResponse(user)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not fetch the user.')
 	}
 }
@@ -52,7 +52,7 @@ module.exports.getAll = async () => {
 
 		return successResponse(users)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not fetch the users.')
 	}
 }
@@ -72,7 +72,7 @@ module.exports.update = async (event) => {
 
 		return successResponse(user)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not update the user.')
 	}
 }
@@ -88,7 +88,7 @@ module.exports.destroy = async (event) => {
 
 		return successResponse(user)
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message || 'Could not destroy the user.')
 	}
 }

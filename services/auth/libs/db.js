@@ -1,6 +1,7 @@
+'use strict'
+
 const Sequelize = require('sequelize')
 const UserModel = require('../models/User')
-const ProductModel = require('../models/Product')
 const sequelize = new Sequelize(
 	process.env.DB_NAME,
 	process.env.DB_USER,
@@ -11,13 +12,10 @@ const sequelize = new Sequelize(
 		port: process.env.DB_PORT
 	}
 )
+
 const User = UserModel(sequelize, Sequelize)
-const Product = ProductModel(sequelize, Sequelize)
 
-User.hasMany(Product, {foreignKey: 'userId', as: 'products'})
-Product.belongsTo(User, {foreignKey: 'userId'})
-
-const Models = { User, Product }
+const Models = { User }
 const connection = {}
 
 module.exports = async () => {

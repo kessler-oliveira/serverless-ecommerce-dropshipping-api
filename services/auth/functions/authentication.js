@@ -23,14 +23,12 @@ module.exports.login = async (event) => {
 
         const authentication = await bcrypt.compare(input.password, user.password)
         if (!authentication) throw new HTTPError(400, 'The credentials do not match.')
-
-		console.log(process.env.JWT_EXPIRATION_TIME)
 		
 		const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION_TIME })
 
 		return successResponse({ token: token })
 	} catch (err) {
-		console.log(err)
+		console.log(JSON.stringify(err))
 		return errorResponse(err.statusCode, err.message)
 	}
 }

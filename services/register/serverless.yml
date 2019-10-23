@@ -1,5 +1,8 @@
 service: sed-api-register
 
+plugins:
+  - serverless-offline
+
 provider:
   name: aws
   runtime: nodejs8.10
@@ -22,13 +25,6 @@ functions:
           path: users
           method: post
           cors: true
-  createUser2:
-    handler: functions/user.create
-    events:
-      - http:
-          path: users2
-          method: post
-          cors: true
   getOneUser:
     handler: functions/user.getOne
     events:
@@ -36,6 +32,10 @@ functions:
           path: users/{id}
           method: get
           cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
   getAllUser:
     handler: functions/user.getAll
     events:
@@ -43,6 +43,10 @@ functions:
           path: users
           method: get
           cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
   updateUser:
     handler: functions/user.update
     events:
@@ -50,6 +54,10 @@ functions:
           path: users/{id}
           method: put
           cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
   destroyUser:
     handler: functions/user.destroy
     events:
@@ -57,6 +65,10 @@ functions:
           path: users/{id}
           method: delete
           cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
   createProduct:
     handler: functions/product.create
     events:
@@ -64,6 +76,10 @@ functions:
           path: products
           method: post
           cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
   getOneProduct:
     handler: functions/product.getOne
     events:
@@ -85,6 +101,10 @@ functions:
           path: products/{id}
           method: put
           cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
   destroyProduct:
     handler: functions/product.destroy
     events:
@@ -92,6 +112,7 @@ functions:
           path: products/{id}
           method: delete
           cors: true
-
-plugins:
-  - serverless-offline
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization

@@ -1,5 +1,8 @@
 service: sed-api-auth
 
+plugins:
+  - serverless-offline
+
 provider:
   name: aws
   runtime: nodejs8.10
@@ -15,6 +18,8 @@ provider:
       "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiRootResourceId
 
 functions:
+  authorization:
+    handler: functions/authorization.handler
   login:
     handler: functions/authentication.login
     events:
@@ -23,5 +28,43 @@ functions:
           method: post
           cors: true
 
-plugins:
-  - serverless-offline
+resources:
+  Resources:
+    Authorization:
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: Authorizer
+        Type: TOKEN
+        AuthorizerResultTtlInSeconds: 0
+        IdentitySource: method.request.header.Authorization
+        AuthorizerUri: 
+          Fn::Join: [ "",
+            [
+              "arn:aws:apigateway:",
+              "${self:provider.region}",
+              ":lambda:path/",
+              "2015-03-31/functions/",
+              Fn::GetAtt: ["AuthorizationLambdaFunction", "Arn" ],
+              "/invocations"
+            ]]
+        RestApiId:
+          Fn::ImportValue: ${self:provider.stage}-sed-api-gateway-restApiId
+    ApiGatewayLambdaPermissions:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName:
+          Fn::GetAtt: [ AuthorizationLambdaFunction, Arn]
+        Action: lambda:InvokeFunction
+        Principal:
+          Fn::Join: [ "",
+          [
+            "apigateway.",
+            Ref: AWS::URLSuffix
+          ]]
+
+  Outputs:
+    Authorization:
+      Value:
+        Ref: Authorization
+      Export:
+        Name: ${self:provider.stage}-sed-authorization

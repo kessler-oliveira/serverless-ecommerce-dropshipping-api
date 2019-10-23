@@ -19,9 +19,9 @@ $ git clone https://github.com/kessler-oliveira/serverless-ecommerce-dropshippin
 
 Finally, go to director and deploy the **services** in order:
 
-| Phase 1         | Phase 2  |
-| :---            | :---     |
-| infraestructure | register |
+| Phase 1         | Phase 2 | Phase 3  |
+| :---            | :---    | :---     |
+| infraestructure | auth    | register |
 
 ``` bash
 $ serverless deploy

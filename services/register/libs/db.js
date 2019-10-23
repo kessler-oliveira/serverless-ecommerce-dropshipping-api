@@ -1,3 +1,5 @@
+'use strict'
+
 const Sequelize = require('sequelize')
 const UserModel = require('../models/User')
 const ProductModel = require('../models/Product')
@@ -11,6 +13,7 @@ const sequelize = new Sequelize(
 		port: process.env.DB_PORT
 	}
 )
+
 const User = UserModel(sequelize, Sequelize)
 const Product = ProductModel(sequelize, Sequelize)
 
