@@ -23,8 +23,23 @@ const buildIAMPolicy = (userId, effect, resource) => {
 	return policy
 }
 
-const authorizeUser = (methodArn) => {
-	return true;
+const scope = {
+	CLIENT: [],
+	EXTERNAL: [],
+	VENDOR: [],
+	ADMIN: [
+		"GET/users",
+		"GET/users/.{36}"
+	]
+}
+
+const authorizeUser = async (role, methodArn) => {
+	try {
+		return scope[role].some(element => new RegExp(`${element}$`).test(methodArn));
+	} catch (err) {
+		console.log(JSON.stringify(err))
+		return false
+	}
 };
 
 module.exports.handler = async (event, context, callback) => {
@@ -36,12 +51,11 @@ module.exports.handler = async (event, context, callback) => {
 		const decoded = jwt.verify(token.replace(/^Bearer\s/, ''), process.env.JWT_SECRET)
 		console.log(JSON.stringify(decoded))
 
-		const userId = decoded.id;
-		const isAllowed = authorizeUser(userId, event.methodArn)
+		const isAllowed = await authorizeUser(decoded.role, event.methodArn)
 
 		const effect = isAllowed ? 'Allow' : 'Deny'
 
-		callback(null, buildIAMPolicy(userId, effect, event.methodArn))
+		callback(null, buildIAMPolicy(decoded.id, effect, event.methodArn))
 	} catch (err) {
 		console.log(JSON.stringify(err))
 		callback('Unauthorized')

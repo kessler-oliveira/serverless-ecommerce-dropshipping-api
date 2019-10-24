@@ -24,6 +24,7 @@ Finally, go to director and deploy the **services** in order:
 | infraestructure | auth    | register |
 
 ``` bash
+$ npm install
 $ serverless deploy
 ```
 
