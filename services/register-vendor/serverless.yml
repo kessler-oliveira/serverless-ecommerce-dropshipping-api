@@ -1,0 +1,64 @@
+service: sed-api-register-vendor
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  timeout: 30
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  stackName: ${self:provider.stage}-${self:service.name}
+  environment: ${file(env.yml):${self:provider.stage}}
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiRootResourceId
+
+functions:
+  adminVendorAllow:
+    handler: functions/vendor.adminAllow
+    events:
+      - http:
+          path: /vendors/{id}/allow/admin
+          method: post
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  adminVendorDeny:
+    handler: functions/vendor.adminDeny
+    events:
+      - http:
+          path: /vendors/{id}/deny/admin
+          method: delete
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  adminGetVendor:
+    handler: functions/vendor.adminGet
+    events:
+      - http:
+          path: /vendors/{id}/admin
+          method: get
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  adminGetAllVendor:
+    handler: functions/vendor.adminGetAll
+    events:
+      - http:
+          path: /vendors/admin
+          method: get
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization

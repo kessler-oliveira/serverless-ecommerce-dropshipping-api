@@ -24,12 +24,43 @@ const buildIAMPolicy = (userId, effect, resource) => {
 }
 
 const scope = {
-	CLIENT: [],
-	EXTERNAL: [],
-	VENDOR: [],
+	CLIENT: [
+		"GET/users/self",
+		"PUT/users/self",
+		"DELETE/users/self",
+	],
+	EXTERNAL: [
+		"GET/users/self",
+		"PUT/users/self",
+		"DELETE/users/self",
+	],
+	VENDOR: [
+		"GET/users/self",
+		"PUT/users/self",
+		"DELETE/users/self",
+		"POST/products/vendor",
+		"GET/products/{id}/vendor",
+		"GET/products/vendor",
+		"PUT/products/{id}/vendor",
+		"DELETE/products/{id}/vendor",
+	],
 	ADMIN: [
-		"GET/users",
-		"GET/users/.{36}"
+		"GET/users/self",
+		"GET/users/.{36}/admin",
+		"GET/users/admin",
+		"PUT/users/self",
+		"PUT/users/.{36}/admin",
+		"DELETE/users/self",
+		"DELETE/users/.{36}/admin",
+		"POST/allow/vendors/.{36}/admin",
+		"DELETE/deny/vendors/.{36}/admin",
+		"GET/vendors/.{36}/admin",
+		"GET/vendors/admin",
+		"POST/products/admin",
+		"GET/products/{id}/admin",
+		"GET/products/admin",
+		"PUT/products/{id}/admin",
+		"DELETE/products/{id}/admin",
 	]
 }
 
@@ -44,7 +75,8 @@ const authorizeUser = async (role, methodArn) => {
 
 module.exports.handler = async (event, context, callback) => {
 
-	console.log(JSON.stringify(event));
+	console.log(JSON.stringify(event))
+	
 	const token = event.authorizationToken;
 
 	try {

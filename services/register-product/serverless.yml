@@ -1,4 +1,4 @@
-service: sed-api-register
+service: sed-api-register-product
 
 plugins:
   - serverless-offline
@@ -18,98 +18,124 @@ provider:
       "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiRootResourceId
 
 functions:
-  createUser:
-    handler: functions/user.create
+  vendorCreateProduct:
+    handler: functions/product.vendorCreate
     events:
       - http:
-          path: users
+          path: /products/vendor
           method: post
           cors: true
-  getOneUser:
-    handler: functions/user.getOne
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  adminCreateProduct:
+    handler: functions/product.adminCreate
     events:
       - http:
-          path: users/{id}
+          path: /products/admin
+          method: post
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  getProductPublished:
+    handler: functions/product.getPublished
+    events:
+      - http:
+          path: /products/{id}
+          method: get
+          cors: true
+  getAllProductPublished:
+    handler: functions/product.getAllPublished
+    events:
+      - http:
+          path: /products
+          method: get
+          cors: true
+  vendorGetProduct:
+    handler: functions/product.vendorGet
+    events:
+      - http:
+          path: /products/{id}/vendor
           method: get
           cors: true
           authorizer:
             type: CUSTOM
             authorizerId:
               "Fn::ImportValue": ${self:provider.stage}-sed-authorization
-  getAllUser:
-    handler: functions/user.getAll
+  vendorGetAllProduct:
+    handler: functions/product.vendorGetAll
     events:
       - http:
-          path: users
+          path: /products/vendor
           method: get
           cors: true
           authorizer:
             type: CUSTOM
             authorizerId:
               "Fn::ImportValue": ${self:provider.stage}-sed-authorization
-  updateUser:
-    handler: functions/user.update
+  adminGetProduct:
+    handler: functions/product.adminGet
     events:
       - http:
-          path: users/{id}
+          path: /products/{id}/admin
+          method: get
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  adminGetAllProduct:
+    handler: functions/product.adminGetAll
+    events:
+      - http:
+          path: /products/admin
+          method: get
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  vendorUpdateProduct:
+    handler: functions/product.vendorUpdate
+    events:
+      - http:
+          path: /products/{id}/vendor
           method: put
           cors: true
           authorizer:
             type: CUSTOM
             authorizerId:
               "Fn::ImportValue": ${self:provider.stage}-sed-authorization
-  destroyUser:
-    handler: functions/user.destroy
+  adminUpdateProduct:
+    handler: functions/product.adminUpdate
     events:
       - http:
-          path: users/{id}
+          path: /products/{id}/admin
+          method: put
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  vendorDestroyProduct:
+    handler: functions/product.vendorDestroy
+    events:
+      - http:
+          path: /products/{id}/vendor
           method: delete
           cors: true
           authorizer:
             type: CUSTOM
             authorizerId:
               "Fn::ImportValue": ${self:provider.stage}-sed-authorization
-  createProduct:
-    handler: functions/product.create
+  adminDestroyProduct:
+    handler: functions/product.adminDestroy
     events:
       - http:
-          path: products
-          method: post
-          cors: true
-          authorizer:
-            type: CUSTOM
-            authorizerId:
-              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
-  getOneProduct:
-    handler: functions/product.getOne
-    events:
-      - http:
-          path: products/{id}
-          method: get
-          cors: true
-  getAllProduct:
-    handler: functions/product.getAll
-    events:
-      - http:
-          path: products
-          method: get
-          cors: true
-  updateProduct:
-    handler: functions/product.update
-    events:
-      - http:
-          path: products/{id}
-          method: put
-          cors: true
-          authorizer:
-            type: CUSTOM
-            authorizerId:
-              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
-  destroyProduct:
-    handler: functions/product.destroy
-    events:
-      - http:
-          path: products/{id}
+          path: /products/{id}/admin
           method: delete
           cors: true
           authorizer:

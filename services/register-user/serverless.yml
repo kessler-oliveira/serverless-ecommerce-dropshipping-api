@@ -1,0 +1,104 @@
+service: sed-api-register-user
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  timeout: 30
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  stackName: ${self:provider.stage}-${self:service.name}
+  environment: ${file(env.yml):${self:provider.stage}}
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": ${self:provider.stage}-sed-api-gateway-restApiRootResourceId
+
+functions:
+  createUser:
+    handler: functions/user.create
+    events:
+      - http:
+          path: /users
+          method: post
+          cors: true
+  selfGetUser:
+    handler: functions/user.selfGet
+    events:
+      - http:
+          path: /users/self
+          method: get
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  adminGetUser:
+    handler: functions/user.adminGet
+    events:
+      - http:
+          path: /users/{id}/admin
+          method: get
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  adminGetAllUser:
+    handler: functions/user.adminGetAll
+    events:
+      - http:
+          path: /users/admin
+          method: get
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  selfUpdateUser:
+    handler: functions/user.selfUpdate
+    events:
+      - http:
+          path: /users/self
+          method: put
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  adminUpdateUser:
+    handler: functions/user.adminUpdate
+    events:
+      - http:
+          path: /users/{id}/admin
+          method: put
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  selfDestroyUser:
+    handler: functions/user.selfDestroy
+    events:
+      - http:
+          path: /users/self
+          method: delete
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization
+  adminDestroyUser:
+    handler: functions/user.adminDestroy
+    events:
+      - http:
+          path: /users/{id}/admin
+          method: delete
+          cors: true
+          authorizer:
+            type: CUSTOM
+            authorizerId:
+              "Fn::ImportValue": ${self:provider.stage}-sed-authorization

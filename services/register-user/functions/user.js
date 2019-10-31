@@ -14,6 +14,8 @@ function HTTPError(statusCode, message) {
 
 module.exports.create = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { User } = await connectToDatabase()
 		const input = JSON.parse(event.body)
 		
@@ -31,8 +33,27 @@ module.exports.create = async (event) => {
 	}
 }
 
-module.exports.getOne = async (event) => {
+module.exports.selfGet = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
+		const { User } = await connectToDatabase()
+		const id = event.requestContext.authorizer.principalId
+		const user = await User.findByPk(id)
+
+		if (!user) throw new HTTPError(404, `User with id: ${id} was not found`)
+
+		return successResponse(user)
+	} catch (err) {
+		console.log(JSON.stringify(err))
+		return errorResponse(err.statusCode, err.message || 'Could not fetch the user.')
+	}
+}
+
+module.exports.adminGet = async (event) => {
+	try {
+		console.log(JSON.stringify(event));
+
 		const { User } = await connectToDatabase()
 		const user = await User.findByPk(event.pathParameters.id)
 
@@ -45,8 +66,10 @@ module.exports.getOne = async (event) => {
 	}
 }
 
-module.exports.getAll = async () => {
+module.exports.adminGetAll = async (event) => {
 	try {
+		console.log(JSON.stringify(event));
+
 		const { User } = await connectToDatabase()
 		const users = await User.findAll()
 
@@ -57,16 +80,19 @@ module.exports.getAll = async () => {
 	}
 }
 
-module.exports.update = async (event) => {
+module.exports.selfUpdate = async (event) => {
 	try {
+		console.log(JSON.stringify(event));
+
 		const input = JSON.parse(event.body)
 		const { User } = await connectToDatabase()
-		const user = await User.findByPk(event.pathParameters.id)
+		const id = event.requestContext.authorizer.principalId
+		const user = await User.findByPk(id)
 
-		if (!user) throw new HTTPError(404, `User with id: ${event.pathParameters.id} was not found`)
+		if (!user) throw new HTTPError(404, `User with id: ${id} was not found`)
 		if (input.name) user.name = input.name
 		if (input.email) user.email = input.email
-		if (input.password) user.password = input.password
+		if (input.password) user.password = await bcrypt.hash(input.password, 8)
 
 		await user.save()
 
@@ -77,8 +103,49 @@ module.exports.update = async (event) => {
 	}
 }
 
-module.exports.destroy = async (event) => {
+module.exports.adminUpdate = async (event) => {
 	try {
+		console.log(JSON.stringify(event));
+
+		const input = JSON.parse(event.body)
+		const { User } = await connectToDatabase()
+		const user = await User.findByPk(event.pathParameters.id)
+
+		if (!user) throw new HTTPError(404, `User with id: ${event.pathParameters.id} was not found`)
+		if (input.role) user.role = input.role
+
+		await user.save()
+
+		return successResponse(user)
+	} catch (err) {
+		console.log(JSON.stringify(err))
+		return errorResponse(err.statusCode, err.message || 'Could not update the user.')
+	}
+}
+
+module.exports.selfDestroy = async (event) => {
+	try {
+		console.log(JSON.stringify(event));
+
+		const { User } = await connectToDatabase()
+		const id = event.requestContext.authorizer.principalId
+		const user = await User.findByPk(id)
+
+		if (!user) throw new HTTPError(404, `User with id: ${id} was not found`)
+
+		await user.destroy()
+
+		return successResponse(user)
+	} catch (err) {
+		console.log(JSON.stringify(err))
+		return errorResponse(err.statusCode, err.message || 'Could not destroy the user.')
+	}
+}
+
+module.exports.adminDestroy = async (event) => {
+	try {
+		console.log(JSON.stringify(event));
+		
 		const { User } = await connectToDatabase()
 		const user = await User.findByPk(event.pathParameters.id)
 
