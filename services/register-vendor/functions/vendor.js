@@ -1,7 +1,5 @@
 'use strict'
 
-const bcrypt = require('bcryptjs-then')
-
 const connectToDatabase = require('../libs/db')
 const errorResponse = require('../libs/utils').errorResponse
 const successResponse = require('../libs/utils').successResponse
@@ -39,7 +37,7 @@ module.exports.adminDeny = async (event) => {
 
 		if (!vendor) throw new HTTPError(404, `Vendor with id: ${event.pathParameters.id} was not found`)
 
-		await user.destroy()
+		await vendor.destroy()
 
 		return successResponse(vendor)
 	} catch (err) {
@@ -64,7 +62,7 @@ module.exports.adminGet = async (event) => {
 	}
 }
 
-module.exports.adminGetAll = async () => {
+module.exports.adminGetAll = async (event) => {
 	try {
 		console.log(JSON.stringify(event))
 		

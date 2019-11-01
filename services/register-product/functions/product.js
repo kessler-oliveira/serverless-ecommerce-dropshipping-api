@@ -12,6 +12,8 @@ function HTTPError(statusCode, message) {
 
 module.exports.vendorCreate = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { Product, Vendor } = await connectToDatabase()
 		const id = event.requestContext.authorizer.principalId
 		const vendor = await Vendor.findByPk(id)
@@ -21,7 +23,7 @@ module.exports.vendorCreate = async (event) => {
 		const input = JSON.parse(event.body)
 
 		input.userId = id
-		input.pubished = false
+		input.published = false
 
 		const product = await Product.create(input)
 
@@ -34,6 +36,8 @@ module.exports.vendorCreate = async (event) => {
 
 module.exports.adminCreate = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { Product } = await connectToDatabase()
 		const input = JSON.parse(event.body)
 
@@ -48,12 +52,14 @@ module.exports.adminCreate = async (event) => {
 
 module.exports.getPublished = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { Product } = await connectToDatabase()
 		const product = await Product.findByPk(event.pathParameters.id)
 
 		if (!product) throw new HTTPError(404, `Product with id: ${event.pathParameters.id} was not found`)
 
-		if (!product.published) throw new HTTPError(404, `Product with id: ${event.pathParameters.id} was not pubished`)
+		if (!product.published) throw new HTTPError(404, `Product with id: ${event.pathParameters.id} was not published`)
 
 		return successResponse(product)
 	} catch (err) {
@@ -62,10 +68,12 @@ module.exports.getPublished = async (event) => {
 	}
 }
 
-module.exports.getAllPublished = async () => {
+module.exports.getAllPublished = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { Product } = await connectToDatabase()
-		const products = await Product.findAll({ where: {pubished: true} })
+		const products = await Product.findAll({ where: {published: true} })
 
 		return successResponse(products)
 	} catch (err) {
@@ -76,6 +84,8 @@ module.exports.getAllPublished = async () => {
 
 module.exports.vendorGet = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { Product, Vendor } = await connectToDatabase()
 
 		const id = event.requestContext.authorizer.principalId
@@ -96,8 +106,10 @@ module.exports.vendorGet = async (event) => {
 	}
 }
 
-module.exports.vendorGetAll = async () => {
+module.exports.vendorGetAll = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { Product, Vendor } = await connectToDatabase()
 
 		const id = event.requestContext.authorizer.principalId
@@ -116,6 +128,8 @@ module.exports.vendorGetAll = async () => {
 
 module.exports.adminGet = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { Product } = await connectToDatabase()
 		const product = await Product.findByPk(event.pathParameters.id)
 
@@ -128,8 +142,10 @@ module.exports.adminGet = async (event) => {
 	}
 }
 
-module.exports.adminGetAll = async () => {
+module.exports.adminGetAll = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { Product } = await connectToDatabase()
 		const products = await Product.findAll()
 
@@ -142,6 +158,8 @@ module.exports.adminGetAll = async () => {
 
 module.exports.vendorUpdate = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const input = JSON.parse(event.body)
 		const { Product, Vendor } = await connectToDatabase()
 
@@ -156,11 +174,11 @@ module.exports.vendorUpdate = async (event) => {
 
 		if (product.userId != id) throw new HTTPError(403, `User is not authorized to access this resource with an explicit deny`)
 
-		if (input.name) product.name = input.name
-		if (input.description) product.description = input.description
-		if (input.pictures) product.pictures = input.pictures
-		if (input.amount) product.amount = input.amount
-		if (input.quantity) product.quantity = input.quantity
+		if ('name' in input) product.name = input.name
+		if ('description' in input) product.description = input.description
+		if ('pictures' in input) product.pictures = input.pictures
+		if ('amount' in input) product.amount = input.amount
+		if ('quantity' in input) product.quantity = input.quantity
 
 		product.published = false
 
@@ -175,18 +193,21 @@ module.exports.vendorUpdate = async (event) => {
 
 module.exports.adminUpdate = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const input = JSON.parse(event.body)
 		const { Product } = await connectToDatabase()
 		const product = await Product.findByPk(event.pathParameters.id)
 
 		if (!product) throw new HTTPError(404, `Product with id: ${event.pathParameters.id} was not found`)
-		if (input.userId) product.userId = input.userId
-		if (input.name) product.name = input.name
-		if (input.description) product.description = input.description
-		if (input.pictures) product.pictures = input.pictures
-		if (input.amount) product.amount = input.amount
-		if (input.quantity) product.quantity = input.quantity
-		if (input.published) product.published = input.published
+
+		if ('userId' in input) product.userId = input.userId
+		if ('name' in input) product.name = input.name
+		if ('description' in input) product.description = input.description
+		if ('pictures' in input) product.pictures = input.pictures
+		if ('amount' in input) product.amount = input.amount
+		if ('quantity' in input) product.quantity = input.quantity
+		if ('published' in input) product.published = input.published
 
 		await product.save()
 
@@ -199,6 +220,8 @@ module.exports.adminUpdate = async (event) => {
 
 module.exports.vendorDestroy = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+
 		const { Product, Vendor } = await connectToDatabase()
 
 		const id = event.requestContext.authorizer.principalId
@@ -223,6 +246,8 @@ module.exports.vendorDestroy = async (event) => {
 
 module.exports.adminDestroy = async (event) => {
 	try {
+		console.log(JSON.stringify(event))
+		
 		const { Product } = await connectToDatabase()
 		const product = await Product.findByPk(event.pathParameters.id)
 

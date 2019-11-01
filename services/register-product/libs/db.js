@@ -19,7 +19,7 @@ const User = UserModel(sequelize, Sequelize)
 const Vendor = VendorModel(sequelize, Sequelize)
 const Product = ProductModel(sequelize, Sequelize)
 
-User.hasMany(Product, {foreignKey: 'userId', as: 'vendors'})
+User.hasMany(Vendor, {foreignKey: 'userId', as: 'vendors'})
 Vendor.belongsTo(User, {foreignKey: 'userId'})
 
 User.hasMany(Product, {foreignKey: 'userId', as: 'products'})
